@@ -1,0 +1,8 @@
+[ENABLE]
+//hooks CUser::ChkPasswd
+004045F4:
+cmp dword ptr[esi+00000130],03
+
+[DISABLE]
+004045F4:
+cmp dword ptr[esi+00000130],0A

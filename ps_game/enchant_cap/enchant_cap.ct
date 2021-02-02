@@ -1,0 +1,7 @@
+[ENABLE]
+0046CCBD:
+cmp byte ptr[esp+13],0A
+
+[DISABLE]
+0046CCBD:
+cmp byte ptr[esp+13],14

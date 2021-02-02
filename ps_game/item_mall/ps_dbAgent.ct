@@ -1,0 +1,21 @@
+[ENABLE]
+alloc(newmem,32)
+//hooks CUser::OnDispatch
+newmem:
+mov ebp,esp
+and esp,-08
+
+pushad
+call 004235D0 //DBCharacter::ReloadPoint
+popad
+
+jmp 00404656
+
+00404651:
+jmp newmem
+
+[DISABLE]
+dealloc(newmem)
+00404651:
+mov ebp,esp
+and esp,-08

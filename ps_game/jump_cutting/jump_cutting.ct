@@ -1,0 +1,23 @@
+[ENABLE]
+alloc(jump_cutting,32)
+label(return)
+//hooks CUser::PacketPC
+jump_cutting:
+mov cl,[ebp+02]
+cmp cl,02
+je 00479155
+//original code
+mov [esp+22],edx
+jmp return
+
+0047894D:
+jmp jump_cutting
+nop
+nop
+return:
+
+[DISABLE]
+dealloc(jump_cutting)
+0047894D:
+mov cl,[ebp+02]
+mov [esp+22],edx

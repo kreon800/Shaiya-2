@@ -1,0 +1,52 @@
+[ENABLE]
+alloc(newmem,128)
+label(return)
+//hooks CUser::ChkPasswd
+newmem:
+push ebx
+_uid:
+mov bl,[edi] //szName
+cmp bl,00
+je _pwd
+cmp bl,22 //"
+je _r1
+cmp bl,27 //'
+je _r1
+inc edi
+jmp _uid
+
+_r1:
+mov byte ptr[edi],20 //space
+inc edi
+jmp _uid
+
+_pwd:
+mov bl,[eax] //szPasswd
+cmp bl,00
+je _exit
+cmp bl,22 //"
+je _r2
+cmp bl,27 //'
+je _r2
+inc eax
+jmp _pwd
+
+_r2:
+mov byte ptr[eax],20 //space
+inc eax
+jmp _pwd
+
+_exit:
+pop ebx
+//original code
+call 00406A30 //GetUser
+jmp return
+
+004045E1:
+jmp newmem
+return:
+
+[DISABLE]
+dealloc(newmem)
+004045E1:
+call 00406A30

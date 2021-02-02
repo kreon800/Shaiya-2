@@ -1,0 +1,87 @@
+[ENABLE]
+alloc(auction,128)
+alloc(arena,128)
+alloc(party,128)
+alloc(capital,128)
+alloc(guild,128)
+//hooks CUser::ItemUse
+auction:
+cmp byte ptr[ebp+00001270],02
+je 0047468A
+//original code
+cmp dword ptr[eax+000001A4],00
+jmp 00473EDE
+
+arena:
+cmp byte ptr[ebp+00001270],02
+je 0047468A
+//original code
+cmp dword ptr[eax+000001A4],00
+jmp 00474004
+
+party:
+cmp byte ptr[ebp+00001270],02
+je 0047468A
+//original code
+cmp dword ptr[ebp+000058B8],00
+jmp 00473407
+
+capital:
+cmp byte ptr[ebp+00001270],02
+je 0047468A
+//original code
+cmp dword ptr[eax+000001A4],00
+jmp 00473DB7
+
+guild:
+cmp byte ptr[ebp+00001270],02
+je 004742B6
+//original code
+cmp dword ptr[eax+000001A4],06
+jmp 0047419D
+
+00473ED7:
+jmp auction
+nop
+nop
+
+00473FFD:
+jmp arena
+nop
+nop
+
+00473400:
+jmp party
+nop
+nop
+
+00473DB0:
+jmp capital
+nop
+nop
+
+00474196:
+jmp guild
+nop
+nop
+
+[DISABLE]
+dealloc(auction)
+dealloc(arena)
+dealloc(party)
+dealloc(capital)
+dealloc(guild)
+00473ED7:
+cmp dword ptr[eax+000001A4],00
+
+00473FFD:
+cmp dword ptr[eax+000001A4],00
+
+00473400:
+cmp dword ptr[ebp+000058B8],00
+
+00473DB0:
+cmp dword ptr[eax+000001A4],00
+
+00474196:
+cmp dword ptr[eax+000001A4],06

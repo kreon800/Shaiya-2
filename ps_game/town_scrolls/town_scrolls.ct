@@ -1,0 +1,343 @@
+[ENABLE]
+alloc(packet_hook,1024)
+alloc(update_hook,1024)
+alloc(effect_hook,2048)
+//hooks CUser::PacketPC
+packet_hook:
+movzx eax,word ptr[ebp+00]
+cmp eax,0x055A //opcode
+je packet
+add eax,-0x501
+jmp 004784DB
+
+packet:
+//save packet in memory
+mov dl,byte ptr[ebp+02]
+mov byte ptr[ecx+5930],dl //bag
+mov dl,byte ptr[ebp+03]
+mov byte ptr[ecx+5934],dl //slot
+mov dl,byte ptr[ebp+04]
+mov byte ptr[ecx+5938],dl //location
+
+mov edi,ecx //ecx = pUser
+jmp 00478F8D //case 0x050A
+
+//hooks CUser::UpdateResetPosition
+update_hook:
+cmp eax,07
+je consume
+cmp eax,01
+jne 0049DEB5
+jmp 0049DDC8
+
+consume:
+mov eax,[edi+5934]
+mov edx,[edi+5930]
+push 00
+push eax //slot
+push edx //bag
+mov ecx,edi //edi = pUser
+call 004728E0 //CUser::ItemUseNSend
+jmp 0049DDC8
+
+//hooks CUser::ItemUse
+effect_hook:
+movzx ecx,byte ptr[eax+46]
+cmp ecx,68 //effect 104
+je itemid
+cmp ecx,4A
+ja 0047468A
+jmp 00473170
+
+teleport:
+call dword ptr[005540D0] //GetTickCount
+add eax,#5000
+mov [ebp+58B4],07 //type
+mov [ebp+58B8],eax
+
+mov ecx,[ebp+DC] //CharId
+mov word ptr[esp+20],0x0221
+mov [esp+22],ecx
+
+lea ecx,[esp+20]
+push 06 //length
+push ecx //packet
+mov eax,ebp //ebp = pUser
+call 004D56D0 //CObject::PSendViewCombat
+jmp 0047469F
+
+itemid:
+cmp [eax],#101102
+je item_102
+cmp [eax],#101103
+je item_103
+cmp [eax],#101104
+je item_104
+cmp [eax],#101105
+je item_105
+cmp [eax],#101106
+je item_106
+cmp [eax],#101107
+je item_107
+cmp [eax],#101108
+je item_108
+cmp [eax],#101109
+je item_109
+jmp 0047468A
+
+item_102:
+mov cl,byte ptr[ebp+12D]
+cmp cl,00 //country
+jne 0047468A
+cmp byte ptr[ebp+5938],00
+je pantanasa
+jmp 0047468A
+
+item_103:
+mov cl,byte ptr[ebp+12D]
+cmp cl,01
+jne 0047468A
+cmp byte ptr[ebp+5938],00
+je theodores
+jmp 0047468A
+
+item_104:
+mov cl,byte ptr[ebp+12D]
+cmp cl,00
+jne 0047468A
+cmp byte ptr[ebp+5938],00
+je beika
+cmp byte ptr[ebp+5938],01
+je aelbeageu
+cmp byte ptr[ebp+5938],02
+je keolloseu
+jmp 0047468A
+
+item_105:
+mov cl,byte ptr[ebp+12D]
+cmp cl,00
+jne 0047468A
+cmp byte ptr[ebp+5938],00
+je haldeck
+cmp byte ptr[ebp+5938],01
+je arktuis
+cmp byte ptr[ebp+5938],02
+je elaste
+jmp 0047468A
+
+item_106:
+mov cl,byte ptr[ebp+12D]
+cmp cl,00
+jne 0047468A
+cmp byte ptr[ebp+5938],00
+je silvaren
+cmp byte ptr[ebp+5938],01
+je whitesand
+cmp byte ptr[ebp+5938],02
+je willieoseu
+jmp 0047468A
+
+item_107:
+mov cl,byte ptr[ebp+12D]
+cmp cl,01
+jne 0047468A
+cmp byte ptr[ebp+5938],00
+je suteron
+cmp byte ptr[ebp+5938],01
+je gliter
+cmp byte ptr[ebp+5938],02
+je aridon
+jmp 0047468A
+
+item_108:
+mov cl,byte ptr[ebp+12D]
+cmp cl,01
+jne 0047468A
+cmp byte ptr[ebp+5938],00
+je aumeros
+cmp byte ptr[ebp+5938],01
+je aruma
+cmp byte ptr[ebp+5938],02
+je starfumos
+jmp 0047468A
+
+item_109:
+mov cl,byte ptr[ebp+12D]
+cmp cl,01
+jne 0047468A
+cmp byte ptr[ebp+5938],00
+je warune
+cmp byte ptr[ebp+5938],01
+je fotamion
+cmp byte ptr[ebp+5938],02
+je meteora
+jmp 0047468A
+
+pantanasa:
+mov dword ptr[ebp+58BC],#75 //MapId
+mov dword ptr[ebp+58C0],(float)1841.7 //PosX
+mov dword ptr[ebp+58C4],(float)2.650 //PosY
+mov dword ptr[ebp+58C8],(float)1817.0 //PosZ
+jmp teleport
+
+theodores:
+mov dword ptr[ebp+58BC],#76
+mov dword ptr[ebp+58C0],(float)1876.3
+mov dword ptr[ebp+58C4],(float)3.256
+mov dword ptr[ebp+58C8],(float)168.68
+jmp teleport
+
+beika:
+mov dword ptr[ebp+58BC],#1
+mov dword ptr[ebp+58C0],(float)581.0
+mov dword ptr[ebp+58C4],(float)78.507
+mov dword ptr[ebp+58C8],(float)1762.0
+jmp teleport
+
+aelbeageu:
+mov dword ptr[ebp+58BC],#1
+mov dword ptr[ebp+58C0],(float)1530.0
+mov dword ptr[ebp+58C4],(float)69.953
+mov dword ptr[ebp+58C8],(float)1830.0
+jmp teleport
+
+keolloseu:
+mov dword ptr[ebp+58BC],#1
+mov dword ptr[ebp+58C0],(float)1001.0
+mov dword ptr[ebp+58C4],(float)13.661
+mov dword ptr[ebp+58C8],(float)776.0
+jmp teleport
+
+haldeck:
+mov dword ptr[ebp+58BC],#19
+mov dword ptr[ebp+58C0],(float)1623.0
+mov dword ptr[ebp+58C4],(float)22.301
+mov dword ptr[ebp+58C8],(float)1701.0
+jmp teleport
+
+arktuis:
+mov dword ptr[ebp+58BC],#19
+mov dword ptr[ebp+58C0],(float)630.0
+mov dword ptr[ebp+58C4],(float)8.461
+mov dword ptr[ebp+58C8],(float)1880.0
+jmp teleport
+
+elaste:
+mov dword ptr[ebp+58BC],#19
+mov dword ptr[ebp+58C0],(float)1595.7
+mov dword ptr[ebp+58C4],(float)8.609
+mov dword ptr[ebp+58C8],(float)1017.3
+jmp teleport
+
+silvaren:
+mov dword ptr[ebp+58BC],#19
+mov dword ptr[ebp+58C0],(float)1426.0
+mov dword ptr[ebp+58C4],(float)29.550
+mov dword ptr[ebp+58C8],(float)210.0
+jmp teleport
+
+whitesand:
+mov dword ptr[ebp+58BC],#19
+mov dword ptr[ebp+58C0],(float)517.0
+mov dword ptr[ebp+58C4],(float)11.975
+mov dword ptr[ebp+58C8],(float)1265.0
+jmp teleport
+
+willieoseu:
+mov dword ptr[ebp+58BC],#19
+mov dword ptr[ebp+58C0],(float)1245.9
+mov dword ptr[ebp+58C4],(float)13.260
+mov dword ptr[ebp+58C8],(float)627.19
+jmp teleport
+
+suteron:
+mov dword ptr[ebp+58BC],#2
+mov dword ptr[ebp+58C0],(float)1777.8
+mov dword ptr[ebp+58C4],(float)126.54
+mov dword ptr[ebp+58C8],(float)277.33
+jmp teleport
+
+gliter:
+mov dword ptr[ebp+58BC],#2
+mov dword ptr[ebp+58C0],(float)1070.0
+mov dword ptr[ebp+58C4],(float)56.118
+mov dword ptr[ebp+58C8],(float)1048.0
+jmp teleport
+
+aridon:
+mov dword ptr[ebp+58BC],#2
+mov dword ptr[ebp+58C0],(float)264.0
+mov dword ptr[ebp+58C4],(float)108.2
+mov dword ptr[ebp+58C8],(float)207.0
+jmp teleport
+
+aumeros:
+mov dword ptr[ebp+58BC],#20
+mov dword ptr[ebp+58C0],(float)1439.0
+mov dword ptr[ebp+58C4],(float)1.515
+mov dword ptr[ebp+58C8],(float)1005.0
+jmp teleport
+
+aruma:
+mov dword ptr[ebp+58BC],#20
+mov dword ptr[ebp+58C0],(float)1431.0
+mov dword ptr[ebp+58C4],(float)16.091
+mov dword ptr[ebp+58C8],(float)1536.0
+jmp teleport
+
+starfumos:
+mov dword ptr[ebp+58BC],#20
+mov dword ptr[ebp+58C0],(float)593.0
+mov dword ptr[ebp+58C4],(float)10.760
+mov dword ptr[ebp+58C8],(float)1067.0
+jmp teleport
+
+warune:
+mov dword ptr[ebp+58BC],#20
+mov dword ptr[ebp+58C0],(float)891.0
+mov dword ptr[ebp+58C4],(float)4.113
+mov dword ptr[ebp+58C8],(float)1561.0
+jmp teleport
+
+fotamion:
+mov dword ptr[ebp+58BC],#20
+mov dword ptr[ebp+58C0],(float)764.0
+mov dword ptr[ebp+58C4],(float)3.631
+mov dword ptr[ebp+58C8],(float)485.0
+jmp teleport
+
+meteora:
+mov dword ptr[ebp+58BC],#20
+mov dword ptr[ebp+58C0],(float)717.0
+mov dword ptr[ebp+58C4],(float)24.04
+mov dword ptr[ebp+58C8],(float)1836.0
+jmp teleport
+
+004784D2:
+jmp packet_hook
+db 90 90 90 90
+
+0049DDBF:
+jmp update_hook
+db 90 90 90 90
+
+00473163:
+jmp effect_hook
+db 90 90 90 90 90 90 90 90
+
+[DISABLE]
+dealloc(packet_hook)
+dealloc(update_hook)
+dealloc(effect_hook)
+004784D2:
+movzx eax,word ptr[ebp+00]
+add eax,FFFFFAFF
+
+0049DDBF:
+cmp eax,01
+jne 0049DEB5
+
+00473163:
+movzx ecx,byte ptr[eax+46]
+cmp ecx,4A
+ja 0047468A

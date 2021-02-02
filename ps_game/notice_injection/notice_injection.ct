@@ -1,0 +1,29 @@
+//https://www.elitepvpers.com/forum/shaiya-pserver-guides-releases/4766697-release-fix-sql-injection-gm-commands.html
+[ENABLE]
+alloc(newmem,128)
+label(return)
+//hooks unnamed method
+newmem:
+cmp cl,27 //'
+je replace
+original:
+mov [edx+eax],cl
+inc eax
+test cl,cl
+jmp return
+
+replace:
+mov cl,20 //space
+jmp original
+
+00480A62:
+jmp newmem
+nop
+return:
+
+[DISABLE]
+dealloc(newmem)
+00480A62:
+mov [edx+eax],cl
+inc eax
+test cl,cl

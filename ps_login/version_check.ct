@@ -1,0 +1,14 @@
+[ENABLE]
+//hooks CServerList::EnableVersion
+0040740C:
+je 00407421
+
+0040741B:
+je 00407421
+
+[DISABLE]
+0040740C:
+je 00407424
+
+0040741B:
+je 00407424
